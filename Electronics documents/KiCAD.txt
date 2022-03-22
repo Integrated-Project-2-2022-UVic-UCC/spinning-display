@@ -1,0 +1,6 @@
+***************** KiCAD Software ***************** 
+ - The KiCAD Software was used to draw the electrical schematics of the project. Is a free software (open source).
+
+ - You can download the software here: https://www.kicad.org/
+
+ - If you want to learn about the software, there is a playlist to learn how to use KiCAD: https://www.youtube.com/watch?v=vaCVh2SAZY4&list=PLEBQazB0HUyR24ckSZ5u05TZHV9khgA1O
