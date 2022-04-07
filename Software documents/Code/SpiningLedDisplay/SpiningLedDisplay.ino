@@ -25,7 +25,7 @@ bool led() { //responsable to asigne what LEDs need to turn on
 
 
 void loop() { //main code
-  /*input: json with each column or a text to display and a color of each LED
+  /*input: text to display and a color of each LED
    * "b" = Blue
    * "r" = Red
    * "g" = Green
@@ -34,15 +34,7 @@ void loop() { //main code
    * "m" = Magenta
    * "w" = White
    * " " = Off
-   char myArray[8][8] = {{"b","p"," "," "," "," "," "," "},
-                         {"b","p"," "," "," "," "," "," "},
-                         {"r","m"," "," "," "," "," "," "},
-                         {"r","m"," "," "," "," "," "," "},
-                         {"g","w"," "," "," "," "," "," "},
-                         {"g","w"," "," "," "," "," "," "},
-                         {"c"," "," "," "," "," "," "," "},
-                         {"c"," "," "," "," "," "," "," "}};
-   *OR
+
    char myText[12] = "Hello World"
    char myColors[12] = "btgcp wbtgcp"
   */
