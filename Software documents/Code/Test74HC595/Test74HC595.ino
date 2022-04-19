@@ -1,52 +1,43 @@
+int latchPin = 5;  // Latch pin of 74HC595 is connected to Digital pin 5
+int clockPin = 6; // Clock pin of 74HC595 is connected to Digital pin 6
+int dataPin = 4;  // Data pin of 74HC595 is connected to Digital pin 4
+ 
+byte leds = 0;    // Variable to hold the pattern of which LEDs are currently turned on or off
+
 /*
-Shift Register Example
-for 74HC595 shift register
-This sketch turns reads serial input and uses it to set the pins
-of a 74HC595 shift register.
-Hardware:
-* 74HC595 shift register attached to pins 8, 12, and 11 of the Arduino,
-as detailed below.
-* LEDs attached to each of the outputs of the shift register.
-Created 22 May 2009
-Created 23 Mar 2010
-by Tom Igoe
-*/
-//Pin connected to latch pin (ST_CP) of 74HC595
-const int latchPin = A0;
-//Pin connected to clock pin (SH_CP) of 74HC595
-const int clockPin = A5;
-////Pin connected to Data in (DS) of 74HC595
-const int dataPin = 4;
-void setup() {
-//set pins to output because they are addressed in the main loop
-pinMode(latchPin, OUTPUT);
-pinMode(dataPin, OUTPUT);
-pinMode(clockPin, OUTPUT);
-Serial.begin(9600);
-Serial.println("reset");
+ * setup() - this function runs once when you turn your Arduino on
+ * We initialize the serial connection with the computer
+ */
+void setup() 
+{
+  // Set all the pins of 74HC595 as OUTPUT
+  pinMode(latchPin, OUTPUT);
+  pinMode(dataPin, OUTPUT);  
+  pinMode(clockPin, OUTPUT);
 }
-void loop() {
-if (Serial.available() > 0) {
-// ASCII '0' through '9' characters are
-// represented by the values 48 through 57.
-// so if the user types a number from 0 through 9 in ASCII,
-// you can subtract 48 to get the actual value:
-int bitToSet = Serial.read() - 48;
-// write to the shift register with the correct bit set high:
-registerWrite(bitToSet, HIGH);
+
+/*
+ * loop() - this function runs over and over again
+ */
+void loop() 
+{
+  leds = 0; // Initially turns all the LEDs off, by giving the variable 'leds' the value 0
+  updateShiftRegister();
+  delay(500);
+  for (int i = 0; i < 8; i++) // Turn all the LEDs ON one by one.
+  {
+    bitSet(leds, i);    // Set the bit that controls that LED in the variable 'leds'
+    updateShiftRegister();
+    delay(1000);
+  }
 }
-}
-// This method sends bits to the shift register:
-void registerWrite(int whichPin, int whichState) {
-// the bits you want to send
-byte bitsToSend = 0;
-// turn off the output so the pins don't light up
-// while you're shifting bits:
-digitalWrite(latchPin, LOW);
-// turn on the next highest bit in bitsToSend:
-bitWrite(bitsToSend, whichPin, whichState);
-// shift the bits out:
-shiftOut(dataPin, clockPin, MSBFIRST, bitsToSend);
-// turn on the output so the LEDs can light up:
-digitalWrite(latchPin, HIGH);
+
+/*
+ * updateShiftRegister() - This function sets the latchPin to low, then calls the Arduino function 'shiftOut' to shift out contents of variable 'leds' in the shift register before putting the 'latchPin' high again.
+ */
+void updateShiftRegister()
+{
+   digitalWrite(latchPin, LOW);
+   shiftOut(dataPin, clockPin, LSBFIRST, leds);
+   digitalWrite(latchPin, HIGH);
 }
