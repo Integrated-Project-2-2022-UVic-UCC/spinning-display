@@ -1,30 +1,64 @@
+//Define what pins are gonna be used
+#define RlatchPin
+#define RclockPin
+#define RdataPin 
+#define Roe 
+#define GlatchPin
+#define GclockPin
+#define GdataPin 
+#define Goe
+#define BlatchPin
+#define BclockPin
+#define BdataPin 
+#define Boe
+
 void setup() {
+  //Test the builtin LED
   pinMode(LED_BUILTIN, OUTPUT);
+
+  //Define the data pins as ourput
+  pinMode(RlatchPin, OUTPUT);
+  pinMode(RdataPin, OUTPUT);
+  pinMode(RclockPin, OUTPUT);
+  pinMode(GlatchPin, OUTPUT);
+  pinMode(GdataPin, OUTPUT);
+  pinMode(GclockPin, OUTPUT);
+  pinMode(BlatchPin, OUTPUT);
+  pinMode(BdataPin, OUTPUT);
+  pinMode(BclockPin, OUTPUT);
+
+  //Start serial port for debug
+  Serial.begin(9600);
+  Serial.println("reset");
 }
 
-void red() { //responsable to turn the red ligth on
+//responsable to turn the red ligth on  
+void red() { 
   
 }
 
-void blue() { //responsable to turn the blue ligth on
+//responsable to turn the blue ligth on
+void blue() { 
   
 }
 
-void green() { //responsable to turn the green ligth on
+//responsable to turn the green ligth on
+void green() { 
   
 }
 
-void colors() { //responsable to mix the color that needs to be turned on
+//responsable to mix the color that needs to be turned on
+void colors() { 
   
 }
 
-bool led() { //responsable to asigne what LEDs need to turn on
-
+//responsable to asigne what LEDs need to turn on
+bool led() { 
   return true;
 }
 
-
-void loop() { //main code
+//main code
+void loop() {
   /*input: text to display and a color of each LED
    * "b" = Blue
    * "r" = Red

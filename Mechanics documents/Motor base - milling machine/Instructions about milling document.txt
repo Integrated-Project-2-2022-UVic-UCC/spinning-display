@@ -1,2 +1,0 @@
-The file with the .crv extension is the file generated from the VCarve Pro software and the file with the .nc 
-extension is the one we use for the milling machine we have at the university
