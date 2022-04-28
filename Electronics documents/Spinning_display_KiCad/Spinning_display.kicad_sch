@@ -4,6 +4,11 @@
 
   (paper "A4")
 
+  (title_block
+    (title "Spinning LED Display")
+    (company "UVic-UCC")
+  )
+
   (lib_symbols
     (symbol "Device:LED" (pin_numbers hide) (pin_names (offset 1.016) hide) (in_bom yes) (on_board yes)
       (property "Reference" "D" (id 0) (at 0 2.54 0)
