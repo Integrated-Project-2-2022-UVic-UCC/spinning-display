@@ -1,108 +1,55 @@
-  /*
-  Nome do Projeto:  HC595_Serial_Control
-  Nome do Aquivo:   HC595_Serial_Control.ino                 
-  Dependencias:     SerialRelay.h  Fonte: https://www.robocore.net
-  link:             https://github.com/RoboCore/SerialRelay
-  MCU:              ATmega
-  Board:            Arduino Uno/Mega/Mini
-  Compilador        N/A
-  IDE:              Arduino IDE 1.6.6
-  Hardware:         Arduino UNO/MEGA/Mini
-  Escrito por:      Rui Viana
-  Modificado por:   N/A 
-  Data:             5/4/2016
-  Uso:              Didático
-  Desenhos          N/A
-  Copyright @       N/A
-  
-  Este programa é software livre;
-  e é distribuído na esperança que possa ser útil, mas SEM QUALQUER GARANTIA;
-  mesmo sem a garantia implícita de COMERCIALIZAÇÃO ou ADEQUAÇÃO A UM DETERMINADO FIM.
-  
-  REVISIONS: (latest entry first)  
-  5/4/2016   -   HC595_Serial_Control.ino - Primeiro release
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  Descrição:  
-  
-  Com este código voce pode acionar portas de CIs HC595 ligados em cascata.
-  Cada modulo na cascata recebe um numero a partir de 1, na ordem em que estiver conectado.
-  As portas são numeradas a partir de 1 até 8  no modulo numero 1, e a partir de 9 até 16 no modulo 2, 
-  e assim por diante nesta mesma sequencia.
-  Ele utiliza somente dois ports do arduino para se conectar aos HC595 ligados em cascata.
-  Atraves do monitor serial, digita-se o numero da porta que se quer acionar.
+int latchPin = 5; //Pin connected to ST_CP of 74HC595
+int clockPin = 6; //Pin connected to SH_CP of 74HC595
+int dataPin = 4;  //Pin connected to DS of 74HC595
 
- Digitando o numero da porta, a mesma se estiver em LOW, fica em HIGH, e vise-versa.
- Podes-se ligar LED ou transistores acionando reles a partir de cada porta.
- Digitando 0 ou qualquer digito diferente de numeros, todas portas serao desligadas.
-  */
-  //--------------------------------------------------------------
-  #include <SerialRelay.h>                                        // Biblioteca para o uso de serial HC595 com 2 fios  
-  const byte NumModulos = 3;                                      // Numeros de HC595 em cascata
-  #define Data 3                                                  // Pino para ligar o Data do HC595 (Pino 14)
-  #define Clock 2                                                 // Pino para ligar Clock  do HC595 (Pino 12
-  SerialRelay relays(Data,Clock,NumModulos);                      // Configuração do modulo
-  byte Porta;                                                     // Porta a ser acionada
-  byte Modulo;                                                    // modulo que contem a porta a ser acionada
-  byte LED_MAtriz[9] [NumModulos+1];                              // Matriz com o estado das portas
-  int Digitado = 0;                                               // variavel para guardar numero digitado
-  //--------------------------------------------------------------
-  void setup() 
-  {
-    Serial.begin(9600);                                           // Inicialisacao da serial
-    for (int M = 1 ; M <= NumModulos; M++)                        // Passe por todos modulos
-    {
-      for (int P = 1 ; P <=8; P++)                                // Passe por todas portas
-      {
-        relays.SetRelay(P, SERIAL_RELAY_OFF, M);                  // Reset todas portas
+void setup() {
+  pinMode(latchPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  digitalWrite(latchPin, 0);
+  shiftOut(dataPin, clockPin, 223);// azul (invertido)
+  shiftOut(dataPin, clockPin, 255);// verde
+  digitalWrite(latchPin, 1);
+}
+
+// the heart of the program
+void shiftOut(int myDataPin, int myClockPin, byte myDataOut) {
+  // This shifts 8 bits out MSB first,
+  //on the rising edge of the clock,
+  //clock idles low
+  //internal function setup
+  int i=0;
+  int pinState;
+  pinMode(myClockPin, OUTPUT);
+  pinMode(myDataPin, OUTPUT);
+  //clear everything out just in case to
+  //prepare shift register for bit shifting
+  digitalWrite(myDataPin, 0);
+  digitalWrite(myClockPin, 0);
+  //for each bit in the byte myDataOut&#xFFFD;
+  //NOTICE THAT WE ARE COUNTING DOWN in our for loop
+  //This means that %00000001 or "1" will go through such
+  //that it will be pin Q0 that lights.
+    for (i=7; i>=0; i--)  {
+      digitalWrite(myClockPin, 0);
+      //if the value passed to myDataOut and a bitmask result
+      // true then... so if we are at i=6 and our value is
+      // %11010100 it would the code compares it to %01000000
+      // and proceeds to set pinState to 1.
+      if ( myDataOut & (1<<i) ) {
+        pinState= 1;
+      }else{
+        pinState= 0;
       }
+      //Sets the pin to HIGH or LOW depending on pinState
+      digitalWrite(myDataPin, pinState);
+      //register shifts bits on upstroke of clock pin
+      digitalWrite(myClockPin, 1);
+      //zero the data pin after shift to prevent bleed through
+      digitalWrite(myDataPin, 0);
     }
-  }
-  //--------------------------------------------------------------
-  void loop() 
-  {
-    if (Serial.available() > 0)                                   // Se houver entrada via serial
-    {
-      delay(30);
-      while(Serial.available())                                   // Enquanto houver dados na serial
-      { 
-        int ASCii=Serial.read();                                  // Le o valor em ASCii
-        if (isDigit(ASCii))                                       // Faça se for um caracter decimal
-        {                                           
-          Digitado=(Digitado*10)+(ASCii-48);                      // Transforme numero digitado de ASCii para HEXA
-        }                                           
-        else                                                      // Se não for caracter decimal, 
-        {                                           
-          Digitado=0;                                             // Zere o numero digitado
-        }                                           
-      }
-      if (Digitado == 0)                                          // Se for 0 reset todas portas
-      {
-         for (int M = 1; M <= NumModulos; M++)                    // Passe por todos modulos
-         {
-           for (int P = 1; P <= 8; P++)                           // Passe por todas portas
-           {
-             relays.SetRelay(P, SERIAL_RELAY_OFF, M);             // Reset todas portas
-             delay(1); 
-             LED_MAtriz [P][M] = 0;                               // Reset a matriz toda
-           }
-         }  
-      }
-      else                                                        // Se não for ligue a porta selecionada
-      {
-        Modulo = ((Digitado-1)/8)+1;                              // Calcula qual HC595 na sequencia
-        Porta = Digitado - 8*(Modulo -1);                         // Calcula que porta do HC595 deve ser acionada
-        LED_MAtriz[Porta][Modulo] = !LED_MAtriz[Porta][Modulo];   // Inverte estado da indicação da porta na matriz
-        if (LED_MAtriz[Porta][Modulo] == 1)                       // Se a porta na matriz estiver 1
-        {
-          relays.SetRelay(Porta, SERIAL_RELAY_ON, Modulo);        // Ligue a porta selecionada
-          delay(1);                                               
-        }
-        else                                                      // Se a porta na matriz estiver 0
-        {
-          relays.SetRelay(Porta, SERIAL_RELAY_OFF, Modulo);       // Desligue a porta selecionada
-          delay(1);                                                
-        }
-      }
-    }
-    Digitado = 0;                                                 // Zere o mumero digitado
-  }
+  //stop shifting
+  digitalWrite(myClockPin, 0);
+}
