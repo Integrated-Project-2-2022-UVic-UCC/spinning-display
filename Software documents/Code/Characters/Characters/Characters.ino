@@ -298,5 +298,5 @@ void signal(byte data){
   shiftOut(dataPin, clockPin, data);// verde
   shiftOut(dataPin, clockPin, flipByte(data));// vermelho
   digitalWrite(latchPin, 1);
-  delay(1);                         // change this accordimg to speed of motor
+  delay(100);                         // change this accordimg to speed of motor
 }
