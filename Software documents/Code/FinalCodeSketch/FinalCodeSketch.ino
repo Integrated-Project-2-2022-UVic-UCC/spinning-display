@@ -13,25 +13,33 @@ void setup() {
 void loop() {
   //Initial test (Made to indentify the color of each shifter)
   digitalWrite(latchPin, 0);
-  shiftOut(223);// Blue (Inverted)
+  shiftOut(225);// Blue (Inverted)
   shiftOut(255);// Green
   shiftOut(255);// Red (Inverted)
   digitalWrite(latchPin, 1);
 
-  delay(2000);
+  delay(200);
+
+  digitalWrite(latchPin, 0);
+  shiftOut(0);// Blue (Inverted)
+  shiftOut(0);// Green
+  shiftOut(0);// Red (Inverted)
+  digitalWrite(latchPin, 1);
+
+  delay(200);
 
   // Initial way of drawing letters
-  T();Sp();
-  E();Sp();
-  S();Sp();
-  T();Sp();
-  E();Sp();
-  Sp();Sp();
-  T();Sp();
-  E();Sp();
-  S();Sp();
-  T();Sp();
-  E();Sp();
+//  T();Sp();
+//  E();Sp();
+//  S();Sp();
+//  T();Sp();
+//  E();Sp();
+//  Sp();Sp();
+//  T();Sp();
+//  E();Sp();
+//  S();Sp();
+//  T();Sp();
+//  E();Sp();
 }
 
 // Cascading function
@@ -304,7 +312,7 @@ void draw(byte data){
     flip = true;
   }
 
-  // Sed the signal
+  // Send the signal
   digitalWrite(latchPin, 0);
   shiftOut(flipByte(data)); // Blue
   shiftOut(data);           // Green
