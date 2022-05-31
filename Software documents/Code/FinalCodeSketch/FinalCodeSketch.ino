@@ -11,22 +11,37 @@ void setup() {
 }
 
 void loop() {
-  //Initial test (Made to indentify the color of each shifter)
-  digitalWrite(latchPin, 0);
-  shiftOut(225);// Blue (Inverted)
-  shiftOut(255);// Green
-  shiftOut(255);// Red (Inverted)
-  digitalWrite(latchPin, 1);
+  float a = 255;
+  for(float i = 0; i <= 8; i++){
+    Serial.println(a);
+    digitalWrite(latchPin, 0);
+    shiftOut(a);// Green (Inverted) primeiro
+    shiftOut(a);// Red Primeiro
+    shiftOut(a);// Blue (Inverted)
+    digitalWrite(latchPin, 1);
+    a = a-pow(2,i);
+    delay(50);  
+  }
 
-  delay(200);
 
-  digitalWrite(latchPin, 0);
-  shiftOut(0);// Blue (Inverted)
-  shiftOut(0);// Green
-  shiftOut(0);// Red (Inverted)
-  digitalWrite(latchPin, 1);
+  
+//  //Initial test (Made to indentify the color of each shifter)
+//  digitalWrite(latchPin, 0);
+//  shiftOut(B11111101);// Green (Inverted)
+//  shiftOut(B11111111);// Red
+//  shiftOut(B11111111);// Blue (Inverted)
+//  digitalWrite(latchPin, 1);
+//
+//  delay(100);
+//
+//  digitalWrite(latchPin, 0);
+//  shiftOut(255);// Green (Inverted) primeiro
+//  shiftOut(255);// Red Primeiro
+//  shiftOut(255);// Blue (Inverted)
+//  digitalWrite(latchPin, 1);
+//
+//  delay(100);
 
-  delay(200);
 
   // Initial way of drawing letters
 //  T();Sp();
@@ -304,21 +319,13 @@ byte flipByte(byte c){
 
 // Draw the Column
 void draw(byte data){
-  // Blink the last led in the Column
-  if (flip) {
-    data = data - B1;
-    flip = false;
-  }else{
-    flip = true;
-  }
-
   // Send the signal
   digitalWrite(latchPin, 0);
+  shiftOut(flipByte(data)); // Green
+  shiftOut(data);           // Red
   shiftOut(flipByte(data)); // Blue
-  shiftOut(data);           // Green
-  shiftOut(flipByte(data)); // Red
   digitalWrite(latchPin, 1);
 
   // Depends on the spin of the motor 
-  delay(100);                         
+  delay(1000);                         
 }
