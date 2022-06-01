@@ -1,60 +1,36 @@
 int latchPin = 5; //Pin connected to ST_CP of 74HC595
 int clockPin = 6; //Pin connected to SH_CP of 74HC595
 int dataPin = 4;  //Pin connected to DS of 74HC595
-bool flip = true; //Used to blink last led
+int magPin = 7;   //Pin connected to Hall AH3582-P-B
 
 void setup() {
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
+  pinMode(magPin, INPUT_PULLUP);
   Serial.begin(9600);
 }
 
 void loop() {
-  float a = 255;
-  for(float i = 0; i <= 8; i++){
-    Serial.println(a);
-    digitalWrite(latchPin, 0);
-    shiftOut(a);// Green (Inverted) primeiro
-    shiftOut(a);// Red Primeiro
-    shiftOut(a);// Blue (Inverted)
-    digitalWrite(latchPin, 1);
-    a = a-pow(2,i);
-    delay(50);  
+//  float a = 255;
+//  for(float i = 0; i <= 8; i++){
+//    Serial.println(a);
+//    digitalWrite(latchPin, 0);
+//    shiftOut(a);// Green (Inverted) primeiro
+//    shiftOut(a);// Red Primeiro
+//    shiftOut(a);// Blue (Inverted)
+//    digitalWrite(latchPin, 1);
+//    a = a-pow(2,i);
+//    delay(50);  
+//  }
+
+//   Initial way of drawing letters
+  if (digitalRead(magPin) == LOW) {
+    T();Sp1();
+    E();Sp1();
+    S();Sp1();
+    T();Sp1();
   }
-
-
-  
-//  //Initial test (Made to indentify the color of each shifter)
-//  digitalWrite(latchPin, 0);
-//  shiftOut(B11111101);// Green (Inverted)
-//  shiftOut(B11111111);// Red
-//  shiftOut(B11111111);// Blue (Inverted)
-//  digitalWrite(latchPin, 1);
-//
-//  delay(100);
-//
-//  digitalWrite(latchPin, 0);
-//  shiftOut(255);// Green (Inverted) primeiro
-//  shiftOut(255);// Red Primeiro
-//  shiftOut(255);// Blue (Inverted)
-//  digitalWrite(latchPin, 1);
-//
-//  delay(100);
-
-
-  // Initial way of drawing letters
-//  T();Sp();
-//  E();Sp();
-//  S();Sp();
-//  T();Sp();
-//  E();Sp();
-//  Sp();Sp();
-//  T();Sp();
-//  E();Sp();
-//  S();Sp();
-//  T();Sp();
-//  E();Sp();
 }
 
 // Cascading function
@@ -308,6 +284,10 @@ void Sp(){
   draw(B11111111);
 }
 
+void Sp1(){
+  draw(B11111111);
+}
+
 // Flip the Column fo the next shifter
 byte flipByte(byte c){
   c = ((c>>1)&0x55)|((c<<1)&0xAA);
@@ -327,5 +307,6 @@ void draw(byte data){
   digitalWrite(latchPin, 1);
 
   // Depends on the spin of the motor 
-  delay(1000);                         
+  //delay(1);
+  delayMicroseconds(500);                         
 }
